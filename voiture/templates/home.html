@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Covoiturage - Partagez vos trajets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 overflow-hidden min-h-screen">
+  <!-- Navigation -->
+  {% include 'elements/navbar.html' %}
+
+  <section class="bg-gradient-to-r flex justify-center items-center  min-h-screen from-blue-600 to-blue-800 text-white">
+    <div class="max-w-7xl p-8 mt-16 ">
+      <div class="grid md:grid-cols-2 gap-12 mx-8 items-center">
+        <!-- Texte Hero -->
+        <div class="">
+          <h1 class="text-4xl md:text-6xl font-bold mb-6">
+            Voyagez malin, 
+            <span class="text-blue-200">économisez</span> 
+            ensemble
+          </h1>
+          <p class="text-xl text-blue-100 mb-8">
+            Rejoignez notre communauté de covoiturage et découvrez une nouvelle façon de voyager. 
+            Économique, écologique et convivial.
+          </p>
+          
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button class="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 text-lg">
+              <i class="fas fa-search mr-2"></i>
+              Trouver un trajet
+            </button>
+            <button class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-300 text-lg">
+              <i class="fas fa-road mr-2"></i>
+              Proposer un trajet
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="flex gap-8 mt-12">
+            <div class="text-center">
+              <div class="text-2xl font-bold">10K+</div>
+              <div class="text-blue-200">Utilisateurs</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold">50K+</div>
+              <div class="text-blue-200">Trajets</div>
+            </div>
+            <div class="text-center">
+              <div class="text-2xl font-bold">95%</div>
+              <div class="text-blue-200">Satisfaction</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-8 shadow-2xl">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Rechercher un trajet</h3>
+          
+          <form method="get" action="{% url 'search' %}" class="space-y-4 outline-none">
+          <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Départ</label>
+            <input type="text" name="ville_depart" placeholder="Ville de départ" class="w-full outline-none text-gray-700 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Arrivée</label>
+            <input type="text" name="ville_arrivee" placeholder="Ville d'arrivée" class="w-full outline-none text-gray-700 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Date</label>
+            <input type="date" name="date_depart" class="w-full text-gray-700 outline-none px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        <div>
+            <label class="block text-gray-700 text-sm font-medium mb-2">Passagers</label>
+            <select name="nbr_passagers" class="w-full px-4 py-3 text-gray-700 outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="1">1 passager</option>
+                <option value="2">2 passagers</option>
+                <option value="3">3 passagers</option>
+                <option value="4">4+ passagers</option>
+            </select>
+        </div>
+    </div>
+    
+    <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">
+        <i class="fas fa-search mr-2"></i>
+        Rechercher des trajets
+    </button>
+</form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+ 
+
+
+  <!-- Footer 
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center space-x-2 mb-4">
+            <i class="fas fa-car text-2xl text-blue-400"></i>
+            <span class="text-xl font-bold">Covoiturage</span>
+          </div>
+          <p class="text-gray-400">La meilleure façon de voyager ensemble, en toute sécurité et à moindre coût.</p>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Navigation</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white">Accueil</a></li>
+            <li><a href="#" class="hover:text-white">Rechercher</a></li>
+            <li><a href="#" class="hover:text-white">Proposer</a></li>
+            <li><a href="#" class="hover:text-white">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Légal</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white">Conditions</a></li>
+            <li><a href="#" class="hover:text-white">Confidentialité</a></li>
+            <li><a href="#" class="hover:text-white">Cookies</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-semibold mb-4">Contact</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><i class="fas fa-envelope mr-2"></i> contact@covoiturage.com</li>
+            <li><i class="fas fa-phone mr-2"></i> +212 5XX-XXXXXX</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2024 Covoiturage. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+-->
+</body>
+</html>

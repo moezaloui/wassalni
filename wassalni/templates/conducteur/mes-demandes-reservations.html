@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes demandes de réservation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+  {% include 'elements/navbar.html' %}
+
+  <div class="max-w-6xl mt-20 mx-auto py-12 px-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">
+      <i class="fa-solid fa-car-side text-blue-500"></i> Mes demandes de réservation
+    </h1>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mb-4 p-3 rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% elif message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-gray-100 text-gray-700{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% if reservations %}
+      <div class="overflow-x-auto bg-white shadow-md rounded-xl">
+        <table class="w-full text-sm text-left text-gray-600">
+          <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+            <tr>
+              <th class="px-6 py-3">Trajet</th>
+              <th class="px-6 py-3">Passager</th>
+              <th class="px-6 py-3 text-center">Places demandées</th>
+              <th class="px-6 py-3 text-center">Statut</th>
+              <th class="px-6 py-3 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reservations %}
+              <tr class="border-b hover:bg-gray-50 transition">
+                <td class="px-6 py-4">
+                  <div class="font-medium text-gray-800">{{ r.trajet.point_depart }} → {{ r.trajet.point_arrivee }}</div>
+                  <div class="text-xs text-gray-500">Date : {{ r.trajet.dateDepart|date:"d/m/Y H:i" }}</div>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-medium">{{ r.passager.utilisateur.firstName }} {{ r.passager.utilisateur.lastName }}</div>
+                  <div class="text-xs text-gray-500">{{ r.passager.utilisateur.email }}</div>
+                </td>
+                <td class="px-6 py-4 text-center font-semibold">{{ r.nbr_place_reserve }}</td>
+                <td class="px-6 py-4 text-center">
+                  {% if r.statut == 'en_attente' %}
+                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">En attente</span>
+                  {% elif r.statut == 'accepte' %}
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">Acceptée</span>
+                  {% else %}
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">Refusée</span>
+                  {% endif %}
+                </td>
+                <td class="px-6 py-4 text-center">
+                  {% if r.statut == 'en_attente' %}
+                    <form method="POST" class="flex justify-center space-x-2">
+                      {% csrf_token %}
+                      <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                      <button type="submit" name="statut" value="accepte"
+                        class="bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow">
+                        <i class="fa-solid fa-check"></i> Accepter
+                      </button>
+                      <button type="submit" name="statut" value="refuse"
+                        class="bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow">
+                        <i class="fa-solid fa-xmark"></i> Refuser
+                      </button>
+                    </form>
+                  {% elif r.statut == 'accepte' %}
+                    <span class="text-green-600 font-semibold"><i class="fa-solid fa-check"></i> Acceptée</span>
+                  {% else %}
+                    <span class="text-red-600 font-semibold"><i class="fa-solid fa-xmark"></i> Refusée</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="bg-white p-6 rounded-xl shadow text-center text-gray-600">
+        <i class="fa-solid fa-info-circle text-blue-500 text-xl"></i>
+        <p class="mt-2">Aucune demande de réservation reçue pour le moment.</p>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>

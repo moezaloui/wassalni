@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes réservations</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  {% include 'elements/navbar.html' %}
+
+  <section class="mt-24 px-6 max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-blue-700 mb-8 flex items-center gap-2">
+      <i class="fas fa-calendar-check text-blue-600"></i>
+      Mes réservations
+    </h1>
+
+    {% if reservations %}
+      <div class="space-y-6">
+        {% for reservation in reservations %}
+          <div class="bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition duration-300">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="text-xl font-semibold text-gray-800">
+                  {{ reservation.trajet.villeDep }} → {{ reservation.trajet.villeArr }}
+                </h2>
+                <p class="text-gray-600 mt-1">
+                  <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                  Départ : {{ reservation.trajet.dateHeureDepart|date:"d/m/Y H:i" }}
+                </p>
+                <p class="text-gray-600">
+                  <i class="fas fa-user text-blue-500 mr-2"></i>
+                  Conducteur :
+                  {{ reservation.trajet.conducteur.utilisateur.firstName }} {{ reservation.trajet.conducteur.utilisateur.lastName }}
+                </p>
+                {% if reservation.trajet.voiture %}
+                  <p class="text-gray-600">
+                    <i class="fas fa-car text-blue-500 mr-2"></i>
+                    Voiture :
+                    {{ reservation.trajet.voiture.marque }} {{ reservation.trajet.voiture.modele }}
+                    ({{ reservation.trajet.voiture.matricule }})
+                  </p>
+                {% endif %}
+              </div>
+
+              <!-- Statut -->
+              <div>
+                {% if reservation.statut == 'en_attente' %}
+                  <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                    En attente
+                  </span>
+                {% elif reservation.statut == 'accepte' %}
+                  <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Acceptée
+                  </span>
+                {% elif reservation.statut == 'refuse' %}
+                  <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Refusée
+                  </span>
+                {% else %}
+                  <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Annulée
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
+              <p class="text-gray-600">
+                <i class="fas fa-ticket-alt text-blue-500 mr-2"></i>
+                <strong>{{ reservation.nbr_place_reserve }}</strong> place(s) réservée(s)
+              </p>
+              <p class="text-lg font-semibold text-blue-700">
+                Total : {{ reservation.trajet.prix|floatformat:2 }} DT / place
+              </p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    {% else %}
+      <div class="bg-white p-10 rounded-xl shadow text-center mt-10">
+        <i class="fas fa-box-open text-5xl text-gray-400 mb-4"></i>
+        <h2 class="text-xl font-semibold text-gray-700 mb-2">Aucune réservation trouvée</h2>
+        <p class="text-gray-500 mb-6">Vous n'avez pas encore effectué de réservations.</p>
+        <a href="/" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+          <i class="fas fa-search mr-2"></i> Trouver un trajet
+        </a>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Messages Django -->
+  {% if messages %}
+  <div class="fixed top-4 right-4 space-y-2 z-50">
+    {% for message in messages %}
+      <div class="px-4 py-3 rounded-lg shadow-md text-white
+                  {% if message.tags == 'success' %}bg-green-500{% elif message.tags == 'error' %}bg-red-500{% else %}bg-blue-500{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</body>
+</html>

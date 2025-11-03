@@ -1,0 +1,161 @@
+<!-- templates/includes/navbar.html -->
+<nav class="bg-white fixed top-0 w-full shadow-md z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 group">
+        <i class="fas fa-car text-2xl text-blue-600 group-hover:scale-110 transition-transform"></i>
+        <span class="text-xl font-bold text-gray-800">
+          Wassalni<span class="text-blue-600">.TN</span>
+        </span>
+      </a>
+
+      <!-- Menu principal -->
+      <div class="hidden md:flex items-center gap-6">
+         
+        {% if request.session.user_id %}
+          {% if request.session.user_role == 'passager' %}
+           <a href="/" class="text-gray-600 hover:text-blue-600 transition">
+            Chercher un Couvoiturage
+          </a>
+           <a href="/passager/reservations/mes-reservations" class="text-gray-600 hover:text-blue-600 transition">
+                Mes réservations
+            </a>
+ {% endif %}
+
+             
+          {% endif %}
+          {% if request.session.user_id %}
+              {% if request.session.user_role == 'conducteur' %}
+                  <a href="/conducteur/trajet/liste/" class="text-gray-600 hover:text-blue-600 transition">
+                    Mes trajets
+                  </a>
+                  <a href="/conducteur/trajet/create/" class="text-gray-600 hover:text-blue-600 transition">
+                    Proposer un trajet 
+                  </a>
+                  <a href="/conducteur/voiture/liste/" class="text-gray-600 hover:text-blue-600 transition">
+                    Mes Voitures
+                  </a>
+                   <a href="/conducteur/voiture/ajouter/" class="text-gray-600 hover:text-blue-600 transition">
+                    Ajouter Voitures
+                  </a>
+                  <a href="/conducteur/trajet/reservations/mes-demandes/" class="text-gray-600 hover:text-blue-600 transition">
+                    Demande Reservations
+                  </a>
+
+              {% endif %}
+
+             
+          {% endif %}
+      </div>
+
+      <!-- Actions utilisateur -->
+      <div class="flex items-center gap-3">
+          {% if request.session.user_id %}
+              <!-- Utilisateur connecté -->
+              <a href="/mon-espace" 
+                 title="Mon espace">
+                <span class="ml-1 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
+                  {% if request.session.user_role == 'conducteur' %}
+                  Conducteur{% else %}Passager{% endif %}
+                </span>
+              </a>
+
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition shadow-md"
+                        title="Se déconnecter">
+                  <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                </button>
+              </form>
+          {% else %}
+              <!-- Utilisateur non connecté -->
+              <a href="/"
+                 class="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition"
+                 title="Se connecter">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span class="hidden sm:inline">Connexion</span>
+              </a>
+
+              <a href="/register/"
+                 class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+                 title="Créer un compte">
+                <i class="fa-solid fa-user-plus"></i>
+                <span class="hidden sm:inline">S'inscrire</span>
+              </a>
+          {% endif %}
+
+        <!-- Menu mobile -->
+        <button class="md:hidden text-gray-600 hover:text-blue-600 transition text-xl"
+                onclick="toggleMobileMenu()"
+                aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Menu mobile déroulant -->
+    <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 border-t pt-4">
+      <div class="flex flex-col gap-3">
+          <a href="/" class="text-gray-600 hover:text-blue-600 transition py-2">
+            <i class="fa-solid fa-home w-6"></i> Accueil
+          </a>
+          <a href="/chercher" class="text-gray-600 hover:text-blue-600 transition py-2">
+            <i class="fa-solid fa-search w-6"></i> Chercher un trajet
+          </a>
+
+          {% if request.session.user_id %}
+              {% if request.session.user_role == 'conducteur' %}
+                  <a href="/proposer" class="text-gray-600 hover:text-blue-600 transition py-2">
+                    <i class="fa-solid fa-plus-circle w-6"></i> Proposer un trajet
+                  </a>
+                  <a href="/conducteur/voiture/liste/" class="text-gray-600 hover:text-blue-600 transition py-2">
+                    <i class="fa-solid fa-car w-6"></i> Mes Voitures
+                  </a>
+                  <a href="/conducteur/trajet/liste/" class="text-gray-600 hover:text-blue-600 transition py-2">
+                    <i class="fa-solid fa-route w-6"></i> Mes trajets
+                  </a>
+              {% endif %}
+
+              <a href="/reservations" class="text-gray-600 hover:text-blue-600 transition py-2">
+                <i class="fa-solid fa-calendar-check w-6"></i> Mes réservations
+              </a>
+
+              <form action="{% url 'logout' %}" method="post" class="mt-2">
+                {% csrf_token %}
+                <button type="submit"
+                        class="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition shadow-md"
+                        title="Se déconnecter">
+                  <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                </button>
+              </form>
+          {% else %}
+              <a href="/" class="text-gray-600 hover:text-blue-600 transition py-2">
+                <i class="fa-solid fa-right-to-bracket w-6"></i> Connexion
+              </a>
+              <a href="/register/" class="text-gray-600 hover:text-blue-600 transition py-2">
+                <i class="fa-solid fa-user-plus w-6"></i> S'inscrire
+              </a>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<script>
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('hidden');
+}
+
+// Fermer le menu mobile au clic en dehors
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('mobileMenu');
+  const btn = e.target.closest('button[aria-label="Menu"]');
+  if (!menu.contains(e.target) && !btn && !menu.classList.contains('hidden')) {
+    menu.classList.add('hidden');
+  }
+});
+</script>

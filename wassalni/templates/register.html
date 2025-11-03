@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription - Covoiturage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 flex justify-center items-center min-h-screen">
+  <div class="bg-blue-600 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-lg">
+    <h2 class="text-2xl font-semibold text-center text-white mb-6">
+      <i class="fas fa-user-plus mr-2"></i>Créer un compte
+    </h2>
+{% if messages %}
+  <div class="mb-4">
+    {% for message in messages %}
+      <div
+        class="p-3 mb-2 rounded-lg 
+               {% if message.tags == 'error' %}bg-red-500 text-white{% endif %}
+               {% if message.tags == 'success' %}bg-green-500 text-white{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+    <form method="POST" action="{% url 'register' %}" id="registerForm">
+      {% csrf_token %}
+
+      <!-- Step 1 : Type utilisateur -->
+      <div class="step-content" id="step1">
+        <label class="block text-white mb-2 font-medium">Vous êtes :</label>
+        <select name="user_type" id="userType"
+          class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" required>
+          <option value="">-- Sélectionnez votre type --</option>
+          <option value="conducteur">Conducteur</option>
+          <option value="passager">Passager</option>
+        </select>
+      </div>
+
+      <!-- Step 2 : Informations personnelles -->
+      <div class="step-content hidden" id="step2">
+        <div>
+          <label class="block text-white mb-2 font-medium">Prénom</label>
+          <input type="text" name="firstName" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">Nom</label>
+          <input type="text" name="lastName" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <!-- Step 3 : Contact -->
+      <div class="step-content hidden" id="step3">
+        <div>
+          <label class="block text-white mb-2 font-medium">Adresse</label>
+          <input type="text" name="adresse" placeholder="Votre adresse complète" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">Téléphone</label>
+          <input type="text" name="phone" placeholder="+216 20 000 000" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">Email</label>
+          <input type="email" name="email" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <!-- Step 4 : Champs spécifiques -->
+      <div class="step-content hidden" id="step4">
+        <div id="conducteurFields" class="hidden">
+          <label class="block text-white mb-2 font-medium">Numéro de permis</label>
+          <input type="text" name="permisID"
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+          <div class="mt-4">
+            <label class="block text-white mb-2 font-medium">Matricule véhicule</label>
+            <input type="text" name="vehiculeMat"
+              class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+        <div id="passagerFields" class="hidden">
+          <p class="text-white">Aucune information supplémentaire requise pour les passagers.</p>
+        </div>
+      </div>
+
+      <!-- Step 5 : Mot de passe -->
+      <div class="step-content hidden" id="step5">
+        <label class="block text-white mb-2 font-medium">Mot de passe</label>
+        <input type="password" name="password" minlength="8" required
+          class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">Confirmer le mot de passe</label>
+          <input type="password" name="confirm_password" minlength="8" required
+            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500" />
+        </div>
+      </div>
+
+      <!-- Boutons navigation -->
+      <div class="flex justify-between mt-8">
+        <button type="button" id="prevBtn"
+          class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500 hidden">
+          <i class="fas fa-arrow-left mr-1"></i> Précédent
+        </button>
+        <button type="button" id="nextBtn"
+          class="bg-white text-blue-500 px-4 py-2 rounded-lg hover:bg-gray-100">
+          Suivant <i class="fas fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+
+      <!-- Bouton final -->
+      <div class="mt-6 text-center hidden" id="submitContainer">
+        <button type="submit"
+          class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+          <i class="fas fa-check mr-2"></i>Créer le compte
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+    const steps = document.querySelectorAll('.step-content');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitContainer = document.getElementById('submitContainer');
+    const userTypeSelect = document.getElementById('userType');
+    const conducteurFields = document.getElementById('conducteurFields');
+    const passagerFields = document.getElementById('passagerFields');
+
+    function showStep(step) {
+      // Masquer toutes les étapes
+      steps.forEach((stepElement) => {
+        stepElement.classList.add('hidden');
+      });
+
+      // Afficher l'étape actuelle
+      document.getElementById(`step${step}`).classList.remove('hidden');
+
+      // Gérer les boutons de navigation
+      prevBtn.classList.toggle('hidden', step === 1);
+      nextBtn.classList.toggle('hidden', step === totalSteps);
+      submitContainer.classList.toggle('hidden', step !== totalSteps);
+
+      // Afficher/masquer les champs spécifiques à l'étape 4
+      if (step === 4) {
+        const userType = userTypeSelect.value;
+        conducteurFields.classList.toggle('hidden', userType !== 'conducteur');
+        passagerFields.classList.toggle('hidden', userType !== 'passager');
+      }
+    }
+
+    function validateStep(step) {
+      const currentStepElement = document.getElementById(`step${step}`);
+      const requiredInputs = currentStepElement.querySelectorAll('[required]');
+      let isValid = true;
+
+      requiredInputs.forEach((input) => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add('border-red-500');
+        } else {
+          input.classList.remove('border-red-500');
+        }
+      });
+
+      // Validation spécifique pour l'étape 5 (mot de passe)
+      if (step === 5) {
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+        if (password !== confirmPassword) {
+          isValid = false;
+          alert('Les mots de passe ne correspondent pas.');
+        }
+      }
+
+      return isValid;
+    }
+
+    // Événement pour le bouton "Suivant"
+    nextBtn.addEventListener('click', () => {
+      if (validateStep(currentStep)) {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      } else {
+        alert('Veuillez remplir tous les champs requis.');
+      }
+    });
+
+    // Événement pour le bouton "Précédent"
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    });
+
+    // Événement pour gérer le changement de type d'utilisateur
+    userTypeSelect.addEventListener('change', () => {
+      if (currentStep === 1 && userTypeSelect.value) {
+        nextBtn.disabled = false;
+      }
+    });
+
+    // Afficher la première étape au chargement
+    showStep(currentStep);
+  </script>
+</body>
+</html>
