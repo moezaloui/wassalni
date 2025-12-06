@@ -44,13 +44,14 @@ def modifier_voiture(request, pk):
         messages.success(request, 'Véhicule modifié avec succès !')
         return redirect('mes_voitures')
 
-    return render(request, 'vehicule/modifier_voiture.html', {'voiture': voiture})
+    return render(request, 'conducteur/modifier_voiture.html', {'voiture': voiture})
 
 def supprimer_voiture(request, pk):
     voiture = get_object_or_404(Vehicule, pk=pk)
     if request.method == 'POST':
         voiture.delete()
         messages.success(request, 'Véhicule supprimé avec succès !')
-        return redirect('mes_voitures')
+        return render(request, 'conducteur/mes_voitures.html', {'voiture': voiture})
 
-    return render(request, 'vehicule/supprimer_voiture.html', {'voiture': voiture})
+    return render(request, 'conducteur/supprimer_voiture.html', {'voiture': voiture})
+

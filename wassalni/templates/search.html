@@ -13,7 +13,7 @@
     
     {% include 'elements/navbar.html' %}
     
-    <div class="mt-20 w-full px-4">
+    <div class="mt-1 h-auto overflow-hidden w-full px-4">
         <!-- En-tête des résultats -->
         <div class="bg-white min-w-full rounded-lg shadow-sm p-6 mb-6">
             <h1 class="text-2xl font-bold text-gray-800 mb-2">Résultats de recherche</h1>
@@ -56,6 +56,102 @@
                 {% endif %}
             </p>
         </div>
+
+<form method="get" class="flex p-5 flex-row justify-between items-start gap-3 bg-white mb-6 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300">
+
+  <div class="flex flex-row gap-3">
+       <input type="hidden" name="ville_depart"  value="{{ request.GET.ville_depart }}">
+    <input type="hidden" name="ville_arrivee" value="{{ request.GET.ville_arrivee }}">
+    <input type="hidden" name="date_depart"   value="{{ request.GET.date_depart }}">
+    <div>
+      <label for="min" class="block text-sm font-medium text-gray-700 mb-2">
+        Prix min (DT)
+      </label>
+      <input 
+        type="number" 
+        id="min" 
+        name="min" 
+        value="{{ request.GET.min|default:'' }}"
+        min="0"
+        class="w-full text-gray-700 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      >
+    </div>
+
+    <div>
+      <label for="max" class="block text-sm font-medium text-gray-700 mb-2">
+        Prix max (DT)
+      </label>
+      <input 
+        type="number" 
+        id="max" 
+        name="max" 
+        value="{{ request.GET.max|default:'' }}"
+        min="0"
+        class="w-full text-gray-700 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      >
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">
+        Préférences  
+      </label>
+
+      <div class="flex mt-5 gap-2">
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input 
+            type="checkbox" 
+            name="fumeur" 
+            {% if request.GET.fumeur %}checked{% endif %}
+            class="form-checkbox text-yellow-500"
+          >
+          <span class="text-gray-700">Fumeur</span>
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input 
+            type="checkbox" 
+            name="bagages" 
+            {% if request.GET.bagages %}checked{% endif %}
+            class="form-checkbox text-blue-500"
+          >
+          <span class="text-gray-700">Bagages</span>
+        </label>
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input 
+            type="checkbox" 
+            name="animaux" 
+            {% if request.GET.animaux %}checked{% endif %}
+            class="form-checkbox text-green-500"
+          >
+          <span class="text-gray-700">Animaux</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex flex-col justify-end">
+      <button 
+        type="submit"
+        class="bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition"
+        title="Rechercher"
+      >
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="flex  flex-col justify-end">
+    <label for="sort" class="block text-sm font-medium text-gray-700 mb-2">
+      Trier par
+    </label>
+    <select name="sort" id="sort" class="bg-blue-600 border border-gray-300 rounded px-3 py-2">
+      <option value="" {% if not request.GET.sort %}selected{% endif %}>Par défaut (date départ)</option>
+      <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Prix croissant</option>
+      <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Prix décroissant</option>
+    </select>
+  </div>
+
+</form>
+
 
         <!-- Liste des trajets -->
         <div class="space-y-4">
@@ -128,20 +224,71 @@
                 <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Aucun trajet trouvé</h3>
                 <p class="text-gray-600 mb-4">Essayez de modifier vos critères de recherche</p>
-                <a href="/" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
+                <a href="{% url 'home' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium">
                     Retour à l'accueil
                 </a>
             </div>
             {% endfor %}
         </div>
 
-        <!-- Nouvelle recherche -->
-        <div class="mt-8 text-center">
-            <a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium">
-                <i class="fas fa-arrow-left mr-2"></i>
-                Effectuer une nouvelle recherche
+        <!-- Pagination -->
+{% if page_obj.has_other_pages %}
+  <nav class="flex justify-center mt-6" aria-label="Pagination">
+    <ul class="inline-flex items-center -space-x-px text-sm">
+      
+      <!-- Bouton précédent -->
+      {% if page_obj.has_previous %}
+        <li>
+          <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" 
+             class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
+            Précédent
+          </a>
+        </li>
+      {% else %}
+        <li>
+          <span class="px-3 py-2 ml-0 leading-tight text-gray-400 bg-gray-200 border border-gray-300 rounded-l-lg cursor-not-allowed">
+            Précédent
+          </span>
+        </li>
+      {% endif %}
+
+      <!-- Numéros de page -->
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <li>
+            <span aria-current="page" class="z-10 px-3 py-2 leading-tight text-blue-600 border border-blue-300 bg-blue-50">
+              {{ num }}
+            </span>
+          </li>
+        {% else %}
+          <li>
+            <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" 
+               class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+              {{ num }}
             </a>
-        </div>
+          </li>
+        {% endif %}
+      {% endfor %}
+
+      <!-- Bouton suivant -->
+      {% if page_obj.has_next %}
+        <li>
+          <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" 
+             class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
+            Suivant
+          </a>
+        </li>
+      {% else %}
+        <li>
+          <span class="px-3 py-2 leading-tight text-gray-400 bg-gray-200 border border-gray-300 rounded-r-lg cursor-not-allowed">
+            Suivant
+          </span>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
     </div>
   </section>
 

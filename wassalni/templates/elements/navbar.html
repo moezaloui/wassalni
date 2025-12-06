@@ -16,7 +16,7 @@
          
         {% if request.session.user_id %}
           {% if request.session.user_role == 'passager' %}
-           <a href="/" class="text-gray-600 hover:text-blue-600 transition">
+           <a href="/passager" class="text-gray-600 hover:text-blue-600 transition">
             Chercher un Couvoiturage
           </a>
            <a href="/passager/reservations/mes-reservations" class="text-gray-600 hover:text-blue-600 transition">
@@ -54,7 +54,7 @@
       <div class="flex items-center gap-3">
           {% if request.session.user_id %}
               <!-- Utilisateur connecté -->
-              <a href="/mon-espace" 
+              <a href="/profile" 
                  title="Mon espace">
                 <span class="ml-1 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
                   {% if request.session.user_role == 'conducteur' %}

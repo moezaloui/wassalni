@@ -91,11 +91,11 @@
                 <a href="{% url 'modifier_voiture' voiture.id %}" class="flex-1 bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg text-center text-sm font-medium transition-all">
                   <i class="fas fa-edit mr-1"></i>
                   Modifier
-                </a>
-                <button onclick="" class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-center text-sm font-medium transition-all">
+                </a >
+                <a href="{% url 'supprimer_voiture' voiture.id %}" class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-center text-sm font-medium transition-all">
                   <i class="fas fa-trash mr-1"></i>
                   Supprimer
-                </button>
+                </a>
               </div>
             </div>
           {% endfor %}

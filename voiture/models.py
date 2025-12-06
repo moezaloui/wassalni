@@ -5,6 +5,7 @@ class Vehicule(models.Model):
     matricule = models.CharField(max_length=20, unique=True)
     marque = models.CharField(max_length=20)
     modele = models.CharField(max_length=20)
+    nbrPlaces = models.CharField(max_length=4)
     couleur = models.CharField(max_length=20)  # correction de 'coleur' → 'couleur'
     conducteur = models.ForeignKey(
         Conducteur,

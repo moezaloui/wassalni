@@ -18,44 +18,93 @@ def home(request):
     return render(request, 'home.html')
 
 
-# Page de recherche de trajets
+from django.core.paginator import Paginator
+
+from django.core.paginator import Paginator
+
 def search(request):
-    # Récupérer les paramètres de recherche
-    ville_depart = request.GET.get('ville_depart', '')
-    ville_arrivee = request.GET.get('ville_arrivee', '')
-    date_depart = request.GET.get('date_depart', '')
-    nbr_passagers = request.GET.get('nbr_passagers', 1)
-    
-    # Initialiser les trajets
+    # Récupérer les paramètres GET avec valeurs par défaut
+    ville_depart = request.GET.get('ville_depart', '').strip()
+    ville_arrivee = request.GET.get('ville_arrivee', '').strip()
+    date_depart = request.GET.get('date_depart', '').strip()
+    nbr_passagers = request.GET.get('nbr_passagers', '1').strip()
+    prix_min = request.GET.get('min', '').strip()
+    prix_max = request.GET.get('max', '').strip()
+
+    pref_fumeur = request.GET.get('fumeur') == 'on'
+    pref_bagages = request.GET.get('bagages') == 'on'
+    pref_animaux = request.GET.get('animaux') == 'on'
+
+    sort = request.GET.get('sort', '')  # tri
+
+    # Base queryset
     trajets = Trajet.objects.select_related('conducteur', 'voiture').all()
-    print(list(trajets))
-    
-    # Appliquer les filtres si des paramètres sont fournis
+
+    # Appliquer filtres
     if ville_depart:
         trajets = trajets.filter(villeDep__icontains=ville_depart)
     if ville_arrivee:
         trajets = trajets.filter(villeArr__icontains=ville_arrivee)
     if date_depart:
         trajets = trajets.filter(dateHeureDepart__date=date_depart)
-    
-    # Filtrer par places disponibles
     try:
         nbr_passagers = int(nbr_passagers)
         trajets = trajets.filter(nbrPlaceDispo__gte=nbr_passagers)
     except (ValueError, TypeError):
         pass
-    
-    # Contexte pour le template
+
+    if prix_min:
+        try:
+            prix_min_val = float(prix_min)
+            trajets = trajets.filter(prix__gte=prix_min_val)
+        except ValueError:
+            pass
+
+    if prix_max:
+        try:
+            prix_max_val = float(prix_max)
+            trajets = trajets.filter(prix__lte=prix_max_val)
+        except ValueError:
+            pass
+
+    # Filtrer selon préférences si demandées
+    if pref_fumeur:
+        trajets = trajets.filter(fumeur=True)
+    if pref_bagages:
+        trajets = trajets.filter(bagages=True)
+    if pref_animaux:
+        trajets = trajets.filter(animaux=True)
+
+    # Tri
+    if sort == 'price_asc':
+        trajets = trajets.order_by('prix')
+    elif sort == 'price_desc':
+        trajets = trajets.order_by('-prix')
+    else:
+        trajets = trajets.order_by('dateHeureDepart')  # tri par défaut
+
+    # Pagination - 5 trajets par page
+    paginator = Paginator(trajets, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'trajets': trajets,
+        'trajets': page_obj,  # trajets paginés
         'ville_depart': ville_depart,
         'ville_arrivee': ville_arrivee,
         'date_depart': date_depart,
         'nbr_passagers': nbr_passagers,
-        'nombre_resultats': trajets.count()
+        'nombre_resultats': trajets.count(),
+        'prix_min': prix_min,
+        'prix_max': prix_max,
+        'pref_fumeur': pref_fumeur,
+        'pref_bagages': pref_bagages,
+        'pref_animaux': pref_animaux,
+        'sort': sort,
+        'page_obj': page_obj,
     }
-    print("context ", context)
-    
+    print("ville_depart =>  ",ville_depart)
+
     return render(request, 'search.html', context)
 
 def trajets_by_conducteur(request):
