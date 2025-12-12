@@ -9,3 +9,16 @@ python3 manage.py migrate
 login super user : 
 admin@damin.com 
 admin@damin.com 
+
+
+
+login 
+
+conducteur
+email : alyeniamine@gmail.com
+pwd : alyeniamine@gmail.com
+
+
+passager : 
+email : moezaloui123@gmail.com
+pwd : 96783227

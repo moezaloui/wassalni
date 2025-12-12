@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'passager',
     'voiture',
     'trajet',
-    'reserver'
+    'reserver',
+    'notifications'
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,18 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# Pour tests en local, tu peux commenter la ligne ci-dessus et décommenter celle-ci :
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'moezaloui123@gmail.com'       # Mets ici ton adresse Gmail réelle
+EMAIL_HOST_PASSWORD = 'lxot iusi blhd sdhe'  # Mets ici ton mot de passe d'application Gmail (pas le mot de passe normal)
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -1,10 +1,6 @@
 from django.db import models
 from conducteur.models import Conducteur
 from passager.models import Passager
-
-from django.db import models
-from conducteur.models import Conducteur
-from voiture.models import Vehicule  # ✅ importer ici
 from trajet.models import Trajet
 
 class Reservation(models.Model):
@@ -12,18 +8,18 @@ class Reservation(models.Model):
         ('en_attente', 'En attente'),
         ('accepte', 'Accepté'),
         ('refuse', 'Refusé'),
-        ('annule', 'Annulé')
+        ('annule', 'Annulé'),
     ]
 
     passager = models.ForeignKey(
         Passager,
         on_delete=models.CASCADE,
-        related_name='reservations_passager'  # 🔹 unique
+        related_name='reservations_passager'
     )
     trajet = models.ForeignKey(
         Trajet,
         on_delete=models.CASCADE,
-        related_name='reservations_trajet'  # 🔹 unique
+        related_name='reservations_trajet'
     )
     nbr_place_reserve = models.PositiveIntegerField()
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='en_attente')

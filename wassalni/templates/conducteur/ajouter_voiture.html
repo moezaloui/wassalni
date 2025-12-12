@@ -62,8 +62,9 @@
                 type="text" 
                 id="matricule" 
                 name="matricule" 
+                value="{{ matricule|default:'' }}"
                 placeholder="Ex: 123 TU 1234"
-                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+                class="w-full px-4 py-2.5 border {% if messages %}border-red-300{% else %}border-gray-300{% endif %} rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
                 required
               >
               <p class="text-xs text-gray-500 mt-1">Format tunisien</p>
@@ -83,27 +84,27 @@
                   required
                 >
                   <option value="">Sélectionnez une marque</option>
-                  <option value="Peugeot">Peugeot</option>
-                  <option value="Renault">Renault</option>
-                  <option value="Citroën">Citroën</option>
-                  <option value="Volkswagen">Volkswagen</option>
-                  <option value="Toyota">Toyota</option>
-                  <option value="Hyundai">Hyundai</option>
-                  <option value="Kia">Kia</option>
-                  <option value="Ford">Ford</option>
-                  <option value="Opel">Opel</option>
-                  <option value="Seat">Seat</option>
-                  <option value="Fiat">Fiat</option>
-                  <option value="Dacia">Dacia</option>
-                  <option value="Mercedes-Benz">Mercedes-Benz</option>
-                  <option value="BMW">BMW</option>
-                  <option value="Audi">Audi</option>
-                  <option value="Nissan">Nissan</option>
-                  <option value="Mazda">Mazda</option>
-                  <option value="Honda">Honda</option>
-                  <option value="Chevrolet">Chevrolet</option>
-                  <option value="Skoda">Skoda</option>
-                  <option value="Autre">Autre</option>
+                  <option value="Peugeot" {% if marque == 'Peugeot' %}selected{% endif %}>Peugeot</option>
+                  <option value="Renault" {% if marque == 'Renault' %}selected{% endif %}>Renault</option>
+                  <option value="Citroën" {% if marque == 'Citroën' %}selected{% endif %}>Citroën</option>
+                  <option value="Volkswagen" {% if marque == 'Volkswagen' %}selected{% endif %}>Volkswagen</option>
+                  <option value="Toyota" {% if marque == 'Toyota' %}selected{% endif %}>Toyota</option>
+                  <option value="Hyundai" {% if marque == 'Hyundai' %}selected{% endif %}>Hyundai</option>
+                  <option value="Kia" {% if marque == 'Kia' %}selected{% endif %}>Kia</option>
+                  <option value="Ford" {% if marque == 'Ford' %}selected{% endif %}>Ford</option>
+                  <option value="Opel" {% if marque == 'Opel' %}selected{% endif %}>Opel</option>
+                  <option value="Seat" {% if marque == 'Seat' %}selected{% endif %}>Seat</option>
+                  <option value="Fiat" {% if marque == 'Fiat' %}selected{% endif %}>Fiat</option>
+                  <option value="Dacia" {% if marque == 'Dacia' %}selected{% endif %}>Dacia</option>
+                  <option value="Mercedes-Benz" {% if marque == 'Mercedes-Benz' %}selected{% endif %}>Mercedes-Benz</option>
+                  <option value="BMW" {% if marque == 'BMW' %}selected{% endif %}>BMW</option>
+                  <option value="Audi" {% if marque == 'Audi' %}selected{% endif %}>Audi</option>
+                  <option value="Nissan" {% if marque == 'Nissan' %}selected{% endif %}>Nissan</option>
+                  <option value="Mazda" {% if marque == 'Mazda' %}selected{% endif %}>Mazda</option>
+                  <option value="Honda" {% if marque == 'Honda' %}selected{% endif %}>Honda</option>
+                  <option value="Chevrolet" {% if marque == 'Chevrolet' %}selected{% endif %}>Chevrolet</option>
+                  <option value="Skoda" {% if marque == 'Skoda' %}selected{% endif %}>Skoda</option>
+                  <option value="Autre" {% if marque == 'Autre' %}selected{% endif %}>Autre</option>
                 </select>
               </div>
 
@@ -116,6 +117,7 @@
                   type="text" 
                   id="modele" 
                   name="modele" 
+                  value="{{ modele|default:'' }}"
                   placeholder="Ex: 208, Clio, Golf..."
                   class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
@@ -143,6 +145,7 @@
                 type="number" 
                 id="annee" 
                 name="annee" 
+                value="{{ annee|default:'' }}"
                 placeholder="2020"
                 min="1980"
                 max="2025"
@@ -164,17 +167,17 @@
                 required
               >
                 <option value="">Sélectionnez</option>
-                <option value="Blanc">Blanc</option>
-                <option value="Noir">Noir</option>
-                <option value="Gris">Gris</option>
-                <option value="Bleu">Bleu</option>
-                <option value="Rouge">Rouge</option>
-                <option value="Vert">Vert</option>
-                <option value="Jaune">Jaune</option>
-                <option value="Orange">Orange</option>
-                <option value="Marron">Marron</option>
-                <option value="Argent">Argent</option>
-                <option value="Autre">Autre</option>
+                <option value="Blanc" {% if couleur == 'Blanc' %}selected{% endif %}>Blanc</option>
+                <option value="Noir" {% if couleur == 'Noir' %}selected{% endif %}>Noir</option>
+                <option value="Gris" {% if couleur == 'Gris' %}selected{% endif %}>Gris</option>
+                <option value="Bleu" {% if couleur == 'Bleu' %}selected{% endif %}>Bleu</option>
+                <option value="Rouge" {% if couleur == 'Rouge' %}selected{% endif %}>Rouge</option>
+                <option value="Vert" {% if couleur == 'Vert' %}selected{% endif %}>Vert</option>
+                <option value="Jaune" {% if couleur == 'Jaune' %}selected{% endif %}>Jaune</option>
+                <option value="Orange" {% if couleur == 'Orange' %}selected{% endif %}>Orange</option>
+                <option value="Marron" {% if couleur == 'Marron' %}selected{% endif %}>Marron</option>
+                <option value="Argent" {% if couleur == 'Argent' %}selected{% endif %}>Argent</option>
+                <option value="Autre" {% if couleur == 'Autre' %}selected{% endif %}>Autre</option>
               </select>
             </div>
 
@@ -188,6 +191,7 @@
                 type="number" 
                 id="nbrPlaces" 
                 name="nbrPlaces" 
+                value="{{ nbrPlaces|default:'' }}"
                 placeholder="5"
                 min="2"
                 max="9"
@@ -216,7 +220,7 @@
               rows="4"
               placeholder="Ex: Véhicule climatisé, GPS intégré, sièges en cuir..."
               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            ></textarea>
+            >{{ description|default:'' }}</textarea>
             <p class="text-xs text-gray-500 mt-1">Décrivez les équipements ou particularités de votre véhicule</p>
           </div>
         </div>
