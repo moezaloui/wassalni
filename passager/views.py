@@ -12,10 +12,14 @@ from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-   # user_id = request.session.get('user_id')  # Récupère l'ID de session (ou None)
+    user_id = request.session.get('user_id')  # Récupère l'ID de session (ou None)
 
-    return render(request, 'home.html')
-  
+    if user_id:  
+        return render(request, 'passager/home.html')
+    else:
+        # Redirige vers la page de login si non connecté
+        messages.success(request, "404 Il faut connecter d'abord.")
+        return redirect('/')
 
 
 

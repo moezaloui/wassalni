@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inscription - Covoiturage</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 flex justify-center items-center min-h-screen p-4">
+  <div class="bg-blue-600 backdrop-blur-lg p-8 rounded-2xl shadow-lg w-full max-w-lg">
+    
+    <!-- Stepper visuel amélioré -->
+    <div class="mb-6">
+      <div class="flex justify-center items-center mb-4">
+        <div class="font-bold text-lg bg-white p-4 rounded-full text-blue-500 shadow-lg">
+          <span id="stepIndicator">1/5</span>
+        </div>
+      </div>
+      
+      <!-- Barre de progression -->
+      <div class="w-full bg-blue-400 rounded-full h-2">
+        <div id="progressBar" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+      </div>
+      
+      <!-- Titre de l'étape -->
+      <div class="text-center mt-4">
+        <h3 id="stepTitle" class="text-white text-lg font-semibold">Type d'utilisateur</h3>
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-semibold text-center text-white mb-6">
+      <i class="fas fa-user-plus mr-2"></i>Créer un compte
+    </h2>
+
+    {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+          <div
+            class="p-3 mb-2 rounded-lg 
+                   {% if message.tags == 'error' %}bg-red-500 text-white{% endif %}
+                   {% if message.tags == 'success' %}bg-green-500 text-white{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}" id="registerForm">
+      {% csrf_token %}
+
+      <!-- Step 1 : Type utilisateur -->
+      <div class="step-content" id="step1">
+        <label class="block text-white mb-2 font-medium">
+          <i class="fas fa-user-tag mr-2"></i>Vous êtes :
+        </label>
+        <select name="user_type" id="userType"
+          class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" required>
+          <option value="">-- Sélectionnez votre type --</option>
+          <option value="conducteur">🚗 Conducteur</option>
+          <option value="passager">👤 Passager</option>
+        </select>
+      </div>
+
+      <!-- Step 2 : Informations personnelles -->
+      <div class="step-content hidden" id="step2">
+        <div>
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-user mr-2"></i>Prénom
+          </label>
+          <input type="text" name="firstName" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+            placeholder="Votre prénom" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-user mr-2"></i>Nom
+          </label>
+          <input type="text" name="lastName" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+            placeholder="Votre nom" />
+        </div>
+      </div>
+
+      <!-- Step 3 : Contact -->
+      <div class="step-content hidden" id="step3">
+        <div>
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-map-marker-alt mr-2"></i>Adresse
+          </label>
+          <input type="text" name="adresse" placeholder="Votre adresse complète" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-phone mr-2"></i>Téléphone
+          </label>
+          <input type="tel" name="phone" placeholder="+216 20 000 000" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" />
+        </div>
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-envelope mr-2"></i>Email
+          </label>
+          <input type="email" name="email" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+            placeholder="exemple@email.com" />
+        </div>
+      </div>
+
+      <!-- Step 4 : Champs spécifiques -->
+      <div class="step-content hidden" id="step4">
+        <div id="conducteurFields" class="hidden">
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-id-card mr-2"></i>Numéro de permis
+          </label>
+          <input type="text" name="permisID" id="permisID"
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+            placeholder="Ex: 12345678" />
+          <div class="mt-4">
+            <label class="block text-white mb-2 font-medium">
+              <i class="fas fa-car mr-2"></i>Matricule véhicule
+            </label>
+            <input type="text" name="vehiculeMat" id="vehiculeMat"
+              class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+              placeholder="Ex: 123 TU 1234" />
+          </div>
+        </div>
+        <div id="passagerFields" class="hidden">
+          <div class="bg-white bg-opacity-20 p-4 rounded-lg text-center">
+            <i class="fas fa-info-circle text-white text-3xl mb-2"></i>
+            <p class="text-white">Aucune information supplémentaire requise pour les passagers.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 : Mot de passe -->
+      <div class="step-content hidden" id="step5">
+        <label class="block text-white mb-2 font-medium">
+          <i class="fas fa-lock mr-2"></i>Mot de passe
+        </label>
+        <input type="password" name="password" id="password" minlength="8" required
+          class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+          placeholder="Minimum 8 caractères" />
+        <div class="mt-4">
+          <label class="block text-white mb-2 font-medium">
+            <i class="fas fa-lock mr-2"></i>Confirmer le mot de passe
+          </label>
+          <input type="password" name="confirm_password" id="confirm_password" minlength="8" required
+            class="w-full p-3 rounded-lg border-2 border-gray-300 focus:ring-2 focus:ring-white focus:border-white transition" 
+            placeholder="Retapez votre mot de passe" />
+        </div>
+        <div id="passwordError" class="mt-2 text-yellow-300 text-sm hidden">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          Les mots de passe ne correspondent pas
+        </div>
+      </div>
+
+      <!-- Boutons navigation -->
+      <div class="flex justify-between mt-8 gap-4">
+        <button type="button" id="prevBtn"
+          class="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg hover:bg-opacity-30 transition flex items-center hidden">
+          <i class="fas fa-arrow-left mr-2"></i> Précédent
+        </button>
+        <button type="button" id="nextBtn"
+          class="bg-white text-blue-600 px-6 py-3 rounded-lg hover:bg-gray-100 transition flex items-center ml-auto font-semibold">
+          Suivant <i class="fas fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+
+      <!-- Bouton final -->
+      <div class="mt-6 text-center hidden" id="submitContainer">
+        <button type="submit"
+          class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition font-semibold shadow-lg">
+          <i class="fas fa-check mr-2"></i>Créer le compte
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-6 text-center">
+      <p class="text-white text-sm">
+        Vous avez déjà un compte ? 
+        <a href="{% url '' %}" class="font-semibold underline hover:text-gray-200">Connectez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+    const steps = document.querySelectorAll('.step-content');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const submitContainer = document.getElementById('submitContainer');
+    const userTypeSelect = document.getElementById('userType');
+    const conducteurFields = document.getElementById('conducteurFields');
+    const passagerFields = document.getElementById('passagerFields');
+    const stepIndicator = document.getElementById('stepIndicator');
+    const progressBar = document.getElementById('progressBar');
+    const stepTitle = document.getElementById('stepTitle');
+    const passwordError = document.getElementById('passwordError');
+
+    // Titres des étapes
+    const stepTitles = [
+      'Type d\'utilisateur',
+      'Informations personnelles',
+      'Coordonnées',
+      'Informations complémentaires',
+      'Sécurité'
+    ];
+
+    function updateProgressBar() {
+      const progress = (currentStep / totalSteps) * 100;
+      progressBar.style.width = progress + '%';
+    }
+
+    function showStep(step) {
+      // Masquer toutes les étapes
+      steps.forEach((stepElement) => {
+        stepElement.classList.add('hidden');
+      });
+
+      // Afficher l'étape actuelle
+      document.getElementById(`step${step}`).classList.remove('hidden');
+
+      // Mettre à jour l'indicateur de step
+      stepIndicator.textContent = `${step}/${totalSteps}`;
+      
+      // Mettre à jour le titre de l'étape
+      stepTitle.textContent = stepTitles[step - 1];
+      
+      // Mettre à jour la barre de progression
+      updateProgressBar();
+
+      // Gérer les boutons de navigation
+      prevBtn.classList.toggle('hidden', step === 1);
+      nextBtn.classList.toggle('hidden', step === totalSteps);
+      submitContainer.classList.toggle('hidden', step !== totalSteps);
+
+      // Afficher/masquer les champs spécifiques à l'étape 4
+      if (step === 4) {
+        const userType = userTypeSelect.value;
+        if (userType === 'conducteur') {
+          conducteurFields.classList.remove('hidden');
+          passagerFields.classList.add('hidden');
+          // Rendre les champs conducteur obligatoires
+          document.getElementById('permisID').setAttribute('required', 'required');
+          document.getElementById('vehiculeMat').setAttribute('required', 'required');
+        } else if (userType === 'passager') {
+          conducteurFields.classList.add('hidden');
+          passagerFields.classList.remove('hidden');
+          // Retirer l'obligation des champs conducteur
+          document.getElementById('permisID').removeAttribute('required');
+          document.getElementById('vehiculeMat').removeAttribute('required');
+        }
+      }
+    }
+
+    function validateStep(step) {
+      const currentStepElement = document.getElementById(`step${step}`);
+      const requiredInputs = currentStepElement.querySelectorAll('[required]');
+      let isValid = true;
+
+      // Réinitialiser les erreurs
+      requiredInputs.forEach((input) => {
+        input.classList.remove('border-red-500');
+      });
+
+      // Vérifier tous les champs requis
+      requiredInputs.forEach((input) => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.classList.add('border-red-500');
+        }
+      });
+
+      // Validation spécifique pour l'étape 3 (email)
+      if (step === 3) {
+        const emailInput = document.querySelector('input[name="email"]');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailInput.value && !emailRegex.test(emailInput.value)) {
+          isValid = false;
+          emailInput.classList.add('border-red-500');
+        }
+      }
+
+      // Validation spécifique pour l'étape 5 (mot de passe)
+      if (step === 5) {
+        const password = document.querySelector('input[name="password"]').value;
+        const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+        
+        passwordError.classList.add('hidden');
+        
+        if (password !== confirmPassword) {
+          isValid = false;
+          passwordError.classList.remove('hidden');
+          document.querySelector('input[name="confirm_password"]').classList.add('border-red-500');
+        }
+      }
+
+      return isValid;
+    }
+
+    // Événement pour le bouton "Suivant"
+    nextBtn.addEventListener('click', () => {
+      if (validateStep(currentStep)) {
+        if (currentStep < totalSteps) {
+          currentStep++;
+          showStep(currentStep);
+          // Scroll vers le haut du formulaire
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } else {
+        // Animation de secousse pour indiquer l'erreur
+        const form = document.getElementById('registerForm');
+        form.classList.add('animate-shake');
+        setTimeout(() => form.classList.remove('animate-shake'), 500);
+      }
+    });
+
+    // Événement pour le bouton "Précédent"
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        currentStep--;
+        showStep(currentStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // Retirer les bordures rouges lors de la saisie
+    document.querySelectorAll('input, select').forEach(input => {
+      input.addEventListener('input', () => {
+        input.classList.remove('border-red-500');
+      });
+    });
+
+    // Vérification en temps réel pour les mots de passe
+    document.getElementById('confirm_password').addEventListener('input', () => {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm_password').value;
+      
+      if (confirmPassword && password !== confirmPassword) {
+        passwordError.classList.remove('hidden');
+      } else {
+        passwordError.classList.add('hidden');
+      }
+    });
+
+    // Afficher la première étape au chargement
+    showStep(currentStep);
+  </script>
+
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    
+    .animate-shake {
+      animation: shake 0.3s ease-in-out;
+    }
+  </style>
+</body>
+</html>

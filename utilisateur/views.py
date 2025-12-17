@@ -49,7 +49,7 @@ def register_views(request):
                 Passager.objects.create(utilisateur=user)
 
             messages.success(request, "Compte créé avec succès !")
-            return redirect("login")
+            return redirect("/")
 
         except IntegrityError:
             messages.error(request, "Cet email existe déjà.")
@@ -58,7 +58,7 @@ def register_views(request):
             import traceback
             print(traceback.format_exc())
 
-    return render(request, "register.html")
+    return render(request, "utilisateur/register.html")
 
 
 # ====== Login ======
@@ -92,7 +92,7 @@ def login_views(request):
 
                 else:
                     messages.error(request, "Aucun profil conducteur ou passager n'est associé.")
-                    return redirect('login')
+                    return redirect('utilisateur/login.html')
 
                 messages.success(request, f"Bienvenue {user.firstName} !")
                 return redirect(redirect_url)
@@ -103,7 +103,7 @@ def login_views(request):
         except Utilisateur.DoesNotExist:
             messages.error(request, "Email non trouvé.")
 
-    return render(request, "login.html")
+    return render(request, "utilisateur/login.html")
 
 
 # ====== Logout ======
@@ -124,7 +124,7 @@ def profile(request):
     except Utilisateur.DoesNotExist:
         return redirect('login')
 
-    return render(request, 'mon-espace.html', {'user': user})
+    return render(request, 'utilisateur/mon-espace.html', {'user': user})
 
 
 # ====== Édition du profil ======

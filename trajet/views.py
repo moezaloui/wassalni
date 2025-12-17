@@ -105,7 +105,7 @@ def search(request):
     }
     print("ville_depart =>  ",ville_depart)
 
-    return render(request, 'search.html', context)
+    return render(request, 'passager/search.html', context)
 
 def trajets_by_conducteur(request):
     conducteur_id = request.session['user_id']
